@@ -1,7 +1,9 @@
 package city;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class City {
 
@@ -36,35 +38,52 @@ public class City {
         occupiedArea = areaNeeded;
     }
 
+//    public Building findHighestBuilding() {
+//        if (buildings.isEmpty()) {
+//            throw new IllegalStateException("There is no building in this city!");
+//        }
+//        Building highestBuilding = buildings.get(0);
+//        for (Building building : buildings) {
+//            if (building.getLevels() > highestBuilding.getLevels()) {
+//                highestBuilding = building;
+//            }
+//        }
+//        return highestBuilding;
+//    }
+
     public Building findHighestBuilding() {
-        if (buildings.isEmpty()) {
-            throw new IllegalStateException("There is no building in this city!");
-        }
-        Building highestBuilding = buildings.get(0);
-        for (Building building : buildings) {
-            if (building.getLevels() > highestBuilding.getLevels()) {
-                highestBuilding = building;
-            }
-        }
-        return highestBuilding;
+        return buildings.stream()
+                .max(Comparator.comparingInt(Building::getLevels))
+                .orElseThrow(() -> new IllegalStateException("There is no building in this city!"));
     }
+
+//    public List<Building> findBuildingsByStreet(String street) {
+//        List<Building> buildingsByStreet = new ArrayList<>();
+//        for (Building building : buildings) {
+//            if (building.getAddress().getStreet().equalsIgnoreCase(street)) {
+//                buildingsByStreet.add(building);
+//            }
+//        }
+//        return buildingsByStreet;
+//    }
 
     public List<Building> findBuildingsByStreet(String street) {
-        List<Building> buildingsByStreet = new ArrayList<>();
-        for (Building building : buildings) {
-            if (building.getAddress().getStreet().equalsIgnoreCase(street)) {
-                buildingsByStreet.add(building);
-            }
-        }
-        return buildingsByStreet;
+        return buildings.stream()
+                .filter(b -> b.getAddress().getStreet().equalsIgnoreCase(street))
+                .collect(Collectors.toList());
     }
 
+//    public boolean isThereBuildingWithMorePeopleThan(int numberOfPeople) {
+//        for (Building building : buildings) {
+//            if (building.calculateNumberOfPeopleCanFit() > numberOfPeople) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+
     public boolean isThereBuildingWithMorePeopleThan(int numberOfPeople) {
-        for (Building building : buildings) {
-            if (building.calculateNumberOfPeopleCanFit() > numberOfPeople) {
-                return true;
-            }
-        }
-        return false;
+        return buildings.stream()
+                .anyMatch(b -> b.calculateNumberOfPeopleCanFit() > numberOfPeople);
     }
 }
